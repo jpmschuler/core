@@ -1,4 +1,5 @@
 <?php
+
 namespace TYPO3\CMS\Core\Resource\Rendering;
 
 /*
@@ -16,6 +17,7 @@ namespace TYPO3\CMS\Core\Resource\Rendering;
 
 use TYPO3\CMS\Core\Resource\FileInterface;
 use TYPO3\CMS\Core\Resource\FileReference;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class VideoTagRenderer
@@ -76,6 +78,15 @@ class VideoTagRenderer implements FileRendererInterface
         }
 
         $attributes = [];
+        if (is_array($options['additionalAttributes'])) {
+            $attributes[] = GeneralUtility::implodeAttributes($options['additionalAttributes'], true, true);
+        }
+        if (is_array($options['data'])) {
+            array_walk($options['data'], function (&$value, $key) {
+                $value = 'data-' . htmlspecialchars($key) . '="' . htmlspecialchars($value) . '"';
+            });
+            $attributes[] = implode(' ', $options['data']);
+        }
         if ((int)$width > 0) {
             $attributes[] = 'width="' . (int)$width . '"';
         }
